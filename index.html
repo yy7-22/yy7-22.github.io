@@ -109,4 +109,11 @@ function getResult(){
     let data = resMap[type];
     document.getElementById("resType").innerText = `你的人格类型：${type}（${data.tag}）`;
     document.getElementById("resContent").innerText = data.desc;
-    document.getElementById("resultBox").style.display =
+    document.getElementById("resType").innerText = `你的人格类型：${type}（${data.tag}）`;
+     document.getElementById("resContent").innerText = data.desc;
+     document.getElementById("resultBox").style.display = "block";
+ }
+ window.onload = renderQ;
+ </script>
+ </body>
+ </html>
