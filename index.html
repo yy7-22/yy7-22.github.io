@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15题精简版MBTI人格测评</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft YaHei,sans-serif;}
+        body{background:#f5f7fa;padding:20px;max-width:800px;margin:0 auto;}
+        .box{background:#fff;border-radius:10px;padding:30px;box-shadow:0 2px 10px #ddd;}
+        h1{text-align:center;color:#333;margin-bottom:20px;font-size:22px;}
+        .tip{color:#666;text-align:center;margin-bottom:30px;line-height:1.6;}
+        .q-item{margin:20px 0;padding-bottom:15px;border-bottom:1px solid #eee;}
+        .q-title{font-size:16px;color:#222;margin-bottom:12px;line-height:1.6;}
+        .opt{margin:8px 0;cursor:pointer;}
+        button{display:block;width:100%;height:45px;background:#409eff;color:#fff;border:none;border-radius:6px;font-size:16px;margin-top:30px;cursor:pointer;}
+        button:hover{background:#337ecc;}
+        .result{margin-top:30px;padding:20px;background:#f0f7ff;border-radius:8px;display:none;}
+        .res-title{font-size:20px;font-weight:bold;margin-bottom:15px;color:#2c5282;}
+        .res-desc{line-height:1.8;color:#333;}
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>15题精简版MBTI人格测评</h1>
+        <p class="tip">请根据自身真实情况选择，答案无对错，完成后自动生成测评结果</p >
+
+        <div id="questionBox"></div>
+        <button onclick="getResult()">提交查看结果</button>
+
+        <div class="result" id="resultBox">
+            <div class="res-title" id="resType"></div>
+            <div class="res-desc" id="resContent"></div>
+        </div>
+    </div>
+
+<script>
+const questions = [
+    {id:1,text:"周末休息时，和朋友聚会热闹一天，比独自在家待着更能让你恢复精力",dim:"EI"},
+    {id:2,text:"面对陌生的社交场合，你通常会主动上前和陌生人搭话、融入话题",dim:"EI"},
+    {id:3,text:"遇到烦心事时，你更愿意找朋友倾诉交流，而不是自己一个人消化情绪",dim:"EI"},
+    {id:4,text:"做小组作业时，你更习惯当组织者带动氛围，而不是默默完成自己的部分",dim:"EI"},
+    {id:5,text:"看故事/电影时，你更关注剧情里真实发生的细节，而不是背后的隐喻和深层含义",dim:"SN"},
+    {id:6,text:"制定计划时，你更习惯按已有的经验和步骤执行，而不是尝试全新的方法",dim:"SN"},
+    {id:7,text:"别人给你讲一件事时，你更在意对方说的具体事实，而不是话里的潜在意思",dim:"SN"},
+    {id:8,text:"畅想未来时，你更偏向于规划具体的目标和步骤，而不是天马行空的想象",dim:"SN"},
+    {id:9,text:"朋友找你吐槽烦心事时，你第一反应是帮他分析问题、给出解决方案，而非先共情情绪",dim:"TF"},
+    {id:10,text:"做决策时，你更看重事情的公平逻辑，而非身边人的感受与人际关系",dim:"TF"},
+    {id:11,text:"被指出错误时，你更在意问题是否纠正，而非对方说话的态度",dim:"TF"},
+    {id:12,text:"面对截止任务，你会提前规划按时完成，不会拖延到最后一刻",dim:"JP"},
+    {id:13,text:"你的桌面/房间大多整齐有序，物品有固定摆放位置",dim:"JP"},
+    {id:14,text:"出门旅行，你习惯提前做好行程，不喜欢临时随机安排",dim:"JP"},
+    {id:15,text:"你更喜欢规律稳定的生活，而非充满未知变化的日常",dim:"JP"}
+];
+const options = ["完全不符合","不太符合","中立","比较符合","完全符合"];
+
+function renderQ(){
+    let html = "";
+    questions.forEach((q,idx)=>{
+        html += `<div class="q-item">
+            <div class="q-title">${idx+1}. ${q.text}</div>`;
+        options.forEach((opt,i)=>{
+            html += `<div class="opt">
+                <input type="radio" name="q${q.id}" value="${i+1}"> ${opt}
+            </div>`;
+        });
+        html += `</div>`;
+    });
+    document.getElementById("questionBox").innerHTML = html;
+}
+
+function getResult(){
+    let ei=0,sn=0,tf=0,jp=0;
+    questions.forEach(q=>{
+        let val = document.querySelector(`input[name="q${q.id}"]:checked`);
+        if(!val){alert("请完成所有题目再提交！");return;}
+        let num = parseInt(val.value);
+        if(q.dim === "EI") ei += num;
+        if(q.dim === "SN") sn += num;
+        if(q.dim === "TF") tf += num;
+        if(q.dim === "JP") jp += num;
+    });
+
+    let e_i = ei >= 12 ? "E" : "I";
+    let s_n = sn >= 12 ? "S" : "N";
+    let t_f = tf >= 9 ? "T" : "F";
+    let j_p = jp >= 12 ? "J" : "P";
+    let type = e_i + s_n + t_f + j_p;
+
+    const resMap = {
+        ISTJ:{tag:"沉稳实干家",desc:"严谨负责、重视规则、注重细节，做事踏实靠谱。建议跳出固有经验，多关注他人情绪。"},
+        ISFJ:{tag:"温柔守护者",desc:"体贴细心、乐于助人，重视人际与承诺。建议多留独处空间，学会适度拒绝。"},
+        INFJ:{tag:"深刻引路人",desc:"洞察力强、心怀理想、共情出色。建议拆分目标落地行动，避免空想。"},
+        INTJ:{tag:"睿智战略家",desc:"逻辑缜密、擅长规划、独立理性。建议接纳变化，不必事事追求完美。"},
+        ISTP:{tag:"灵活手艺人",desc:"务实理性、动手能力强、适应力好。建议主动表达想法，尝试制定长期计划。"},
+        ISFP:{tag:"自由艺术家",desc:"温和善良、热爱生活、不喜冲突。建议设立小目标，主动表达自身需求。"},
+        INFP:{tag:"理想治愈者",desc:"内心柔软、富有创造力、共情力强。建议走出自我世界，把想法落地。"},
+        INTP:{tag:"好奇思考者",desc:"逻辑清晰、求知欲强、热爱钻研。建议将思考转化为行动，把控时间。"},
+        ESTP:{tag:"活力挑战者",desc:"外向灵活、行动力强、善于应变。建议做好长远规划，顾及他人感受。"},
+        ESFP:{tag:"快乐表演者",desc:"热情开朗、感染力强，享受当下生活。建议培养长期习惯，合理独处。"},
+        ENFP:{tag:"热情追梦人",desc:"脑洞丰富、活力十足、擅长鼓舞他人。建议聚焦目标，提升专注力。"},
+        ENTP:{tag:"聪明辩论家",desc:"思维敏捷、口才出众、乐于创新。建议多倾听他人，把创意落地。"},
+        ESTJ:{tag:"果断管理者",desc:"执行力强、有领导力、重视效率。建议放缓姿态，包容不同方式。"},
+        ESFJ:{tag:"热心东道主",desc:"友善热情、擅长照顾他人、人缘佳。建议优先顾及自身需求。"},
+        ENFJ:{tag:"魅力教育家",desc:"共情力强、有号召力、责任心重。建议减少过度操心，专注自我成长。"},
+        ENTJ:{tag:"远见指挥官",desc:"自信果断、格局开阔、擅长带队。建议关注细节，体谅他人情绪。"}
+    };
+
+    let data = resMap[type];
+    document.getElementById("resType").innerText = `你的人格类型：${type}（${data.tag}）`;
+    document.getElementById("resContent").innerText = data.desc;
+    document.getElementById("resultBox").style.display =
